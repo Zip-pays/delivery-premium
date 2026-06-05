@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UPPS Delivery - Track with Precision</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%); color: #fff; min-height: 100vh; }
+        header { background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%); border-bottom: 2px solid #00d084; padding: 20px; box-shadow: 0 4px 15px rgba(0,208,132,.2); }
+        .header-content { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 15px; flex-wrap: wrap; }
+        .logo { font-size: 28px; font-weight: 900; background: linear-gradient(135deg, #00d084 0%, #39ff14 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; display: flex; align-items: center; gap: 10px; }
+        .admin-badge { background: #00d084; color: #000; padding: 8px 16px; border-radius: 25px; font-weight: 600; font-size: 12px; display: flex; align-items: center; gap: 8px; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+        .tracking-section { background: linear-gradient(135deg, rgba(0,208,132,.1) 0%, rgba(57,255,20,.05) 100%); border: 2px solid #00d084; border-radius: 15px; padding: 40px; margin-bottom: 40px; text-align: center; box-shadow: 0 8px 32px rgba(0,208,132,.15); }
+        .tracking-section h1 { font-size: 42px; margin-bottom: 10px; background: linear-gradient(135deg, #00d084, #39ff14); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .tracking-section p { font-size: 16px; color: #aaa; }
+        .tracking-input-group { display: flex; gap: 15px; justify-content: center; margin: 20px 0; flex-wrap: wrap; }
+        .tracking-input { padding: 15px 20px; border: 2px solid #00d084; border-radius: 10px; background: rgba(0,208,132,.05); color: #fff; font-size: 16px; width: 300px; transition: all .3s; }
+        .tracking-input:focus { outline: none; background: rgba(0,208,132,.15); box-shadow: 0 0 20px rgba(0,208,132,.5); border-color: #39ff14; }
+        .btn { padding: 15px 40px; border: none; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all .3s; display: inline-flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none; }
+        .btn-primary { background: linear-gradient(135deg, #00d084, #39ff14); color: #000; }
+        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,208,132,.4); }
+        .btn-cancel { background: rgba(0,208,132,.1); color: #00d084; border: 1px solid #00d084; }
+        .btn-cancel:hover { background: rgba(0,208,132,.2); }
+        .hidden-content { display: none; }
+        .hidden-content.active { display: block; animation: slideDown .5s ease; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        .item-details, .payment-section { background: linear-gradient(135deg, rgba(0,208,132,.08), rgba(57,255,20,.03)); border: 2px solid #00d084; border-radius: 15px; padding: 30px; margin-bottom: 40px; box-shadow: 0 8px 32px rgba(0,208,132,.1); }
+        .item-details h2, .map-section h2, .riders-section h2, .payment-section h2 { color: #00d084; margin-bottom: 20px; font-size: 26px; display: flex; align-items: center; gap: 10px; }
+        .item-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+        .item-card { background: rgba(0,208,132,.05); border: 1px solid #00d084; border-radius: 10px; padding: 20px; text-align: center; transition: all .3s; }
+        .item-card:hover { background: rgba(0,208,132,.15); transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,208,132,.2); }
+        .item-card .label { color: #aaa; font-size: 12px; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 1px; }
+        .item-card .value { color: #00d084; font-size: 22px; font-weight: 700; word-break: break-word; }
+        .receiver-card { background: rgba(0,208,132,.05); border: 1px solid #00d084; border-radius: 10px; padding: 20px; }
+        .receiver-row { display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid rgba(0,208,132,.2); flex-wrap: wrap; }
+        .receiver-row:last-child { border-bottom: none; }
+        .r-label { color: #aaa; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; }
+        .r-value { color: #00d084; font-weight: 600; text-align: right; max-width: 70%; word-break: break-word; }
+        .map-section { margin-bottom: 40px; }
+        .map-container { border: 2px solid #00d084; border-radius: 15px; overflow: hidden; height: 450px; box-shadow: 0 8px 32px rgba(0,208,132,.2); }
+        .map-container iframe { width: 100%; height: 100%; border: none; }
+        .riders-section { margin-bottom: 40px; }
+        .riders-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .rider-card { background: linear-gradient(135deg, rgba(0,208,132,.08), rgba(57,255,20,.03)); border: 2px solid #00d084; border-radius: 15px; padding: 20px; cursor: pointer; transition: all .3s; position: relative; overflow: hidden; }
+        .rider-card:hover { transform: translateY(-8px); box-shadow: 0 12px 40px rgba(0,208,132,.3); border-color: #39ff14; }
+        .rider-card.selected { background: linear-gradient(135deg, rgba(0,208,132,.25), rgba(57,255,20,.15)); border-color: #39ff14; box-shadow: 0 0 30px rgba(0,208,132,.5); }
+        .rider-header { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
+        .rider-avatar { width: 60px; height: 60px; background: linear-gradient(135deg, #00d084, #39ff14); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #000; font-size: 22px; font-weight: 700; }
+        .rider-info h3 { color: #00d084; margin-bottom: 5px; font-size: 18px; }
+        .rider-rating { color: #aaa; font-size: 13px; display: flex; align-items: center; gap: 5px; }
+        .rider-rating .stars { color: #ffc107; }
+        .rider-details { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(0,208,132,.3); }
+        .detail-item { text-align: center; }
+        .detail-item .label { color: #aaa; font-size: 11px; text-transform: uppercase; margin-bottom: 5px; display: block; letter-spacing: 1px; }
+        .detail-item .value { color: #00d084; font-size: 15px; font-weight: 600; }
+        .rider-price { text-align: center; }
+        .price { color: #39ff14; font-size: 32px; font-weight: 900; }
+        .price-label { color: #aaa; font-size: 12px; }
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,.9); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px; }
+        .modal.active { display: flex; animation: fadeIn .3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal-content { background: linear-gradient(135deg, #1a1a1a, #0d0d0d); border: 2px solid #00d084; border-radius: 15px; padding: 32px; max-width: 520px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,208,132,.3); }
+        .modal-header { text-align: center; margin-bottom: 24px; }
+        .modal-header h2 { color: #00d084; font-size: 24px; margin-bottom: 8px; }
+        .modal-header p { color: #aaa; font-size: 14px; }
+        .order-summary { background: rgba(0,208,132,.05); border: 1px solid #00d084; border-radius: 10px; padding: 20px; margin-bottom: 20px; }
+        .summary-item { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid rgba(0,208,132,.2); }
+        .summary-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .summary-item .label { color: #aaa; }
+        .summary-item .value { color: #00d084; font-weight: 600; }
+        .warning-box { background: rgba(255,193,7,.08); border: 1px solid #ffc107; border-radius: 10px; padding: 15px; margin-bottom: 20px; }
+        .warning-box strong { color: #ffc107; display: block; margin-bottom: 6px; }
+        .warning-box p { color: #ddd; font-size: 13px; }
+        .modal-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .loading-modal { position: fixed; inset: 0; background: rgba(0,0,0,.95); z-index: 1100; display: none; align-items: center; justify-content: center; flex-direction: column; }
+        .loading-modal.active { display: flex; animation: fadeIn .3s ease; }
+        .loader { width: 80px; height: 80px; border: 4px solid rgba(0,208,132,.2); border-top: 4px solid #00d084; border-right: 4px solid #39ff14; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading-text { color: #00d084; font-size: 20px; font-weight: 600; text-align: center; margin-bottom: 10px; }
+        .loading-note { color: #aaa; font-size: 14px; text-align: center; padding: 0 20px; }
+        .payment-method { background: rgba(0,208,132,.05); border: 1px solid #00d084; border-radius: 10px; padding: 20px; margin-bottom: 20px; display: flex; align-items: center; gap: 15px; }
+        .payment-method i { font-size: 32px; color: #00d084; }
+        .payment-method-info { text-align: left; }
+        .payment-method-info h3 { color: #00d084; margin-bottom: 5px; }
+        .payment-method-info p { color: #aaa; font-size: 13px; }
+        .payment-instructions { background: rgba(0,208,132,.05); border: 1px dashed #00d084; border-radius: 10px; padding: 20px; margin-bottom: 24px; text-align: left; }
+        .payment-instructions h3 { color: #00d084; margin-bottom: 15px; }
+        .payment-instructions ol { margin-left: 20px; color: #ccc; }
+        .payment-instructions li { margin-bottom: 10px; line-height: 1.6; }
+        .payment-instructions strong { color: #39ff14; }
+        .btn-pay-now { font-size: 18px; padding: 18px 50px; width: 100%; max-width: 400px; }
+        footer { background: #0a0a0a; border-top: 2px solid #00d084; padding: 30px 20px; text-align: center; color: #aaa; margin-top: 60px; }
+        @media (max-width: 768px) {
+            .tracking-section { padding: 24px; }
+            .tracking-input { width: 100%; }
+            .tracking-section h1 { font-size: 30px; }
+            .map-container { height: 320px; }
+            .riders-grid { grid-template-columns: 1fr; }
+            .modal-buttons { grid-template-columns: 1fr; }
+            .r-value { max-width: 100%; text-align: left; }
+            .receiver-row { flex-direction: column; gap: 4px; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-content">
+        <div class="logo"><i class="fa-solid fa-truck-fast"></i> UPPS Delivery</div>
+        <div class="admin-badge"><i class="fa-solid fa-shield-halved"></i> Admin</div>
+    </div>
+</header>
+
+<div class="container">
+    <section class="tracking-section">
+        <h1>Track with Precision</h1>
+        <p>Deliver with Confidence</p>
+        <p style="margin-bottom:24px;">Enter your tracking ID to view delivery details and select a rider</p>
+        <div class="tracking-input-group">
+            <input class="tracking-input" id="trackingInput" placeholder="Enter Tracking ID" value="">
+            <button class="btn btn-primary" onclick="handleVerify()">
+                <i class="fa-solid fa-magnifying-glass"></i> Verify
+            </button>
+        </div>
+        <p style="font-size:13px; color:#888;">Example: REG81993</p>
+    </section>
+
+    <div id="details-anchor"></div>
+
+    <div class="hidden-content" id="hiddenContent">
+        <section class="item-details">
+            <h2><i class="fa-solid fa-box"></i> Package Details</h2>
+            <div class="item-grid">
+                <div class="item-card">
+                    <div class="label">Item Type</div>
+                    <div class="value">Cash</div>
+                </div>
+                <div class="item-card">
+                    <div class="label">Item Value</div>
+                    <div class="value" style="font-size:18px;">৳66,279,600 BDT</div>
+                    <div style="color:#aaa; font-size:13px; margin-top:4px;">≈ $539,490 USD</div>
+                </div>
+                <div class="item-card">
+                    <div class="label">Tracking ID</div>
+                    <div class="value">REG81993</div>
+                </div>
+                <div class="item-card">
+                    <div class="label">Status</div>
+                    <div class="value">Incoming</div>
+                </div>
+            </div>
+
+            <div style="margin-top:28px;">
+                <h2 style="font-size:22px; margin-bottom:12px;"><i class="fa-solid fa-user"></i> Receiver Information</h2>
+                <div class="receiver-card">
+                    <div class="receiver-row">
+                        <span class="r-label">Name</span>
+                        <span class="r-value">A K M Gias Uddin Ahmed</span>
+                    </div>
+                    <div class="receiver-row">
+                        <span class="r-label">Address</span>
+                        <span class="r-value">252/4 West Manikdi, Dhaka Cantonment, Dhaka 1206, Bangladesh</span>
+                    </div>
+                    <div class="receiver-row">
+                        <span class="r-label">Building</span>
+                        <span class="r-value">House of Abbas, 4th Floor</span>
+                    </div>
+                    <div class="receiver-row">
+                        <span class="r-label">Email</span>
+                        <span class="r-value">Advgias@1956gmail.Com</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="map-section">
+            <h2><i class="fa-solid fa-location-dot"></i> Delivery Location</h2>
+            <div class="map-container">
+                <iframe title="Delivery Location" src="https://www.google.com/maps?q=252%2F4%20West%20Manikdi%2C%20Dhaka%20Cantonment%2C%20Dhaka%201206%2C%20Bangladesh&output=embed" loading="lazy"></iframe>
+            </div>
+        </section>
+
+        <section class="riders-section">
+            <h2><i class="fa-solid fa-motorcycle"></i> Available Delivery Riders</h2>
+            <p style="color:#aaa; margin-bottom:20px;">Select your preferred delivery option</p>
+            <div class="riders-grid">
+                <div class="rider-card" onclick="selectRider(1)" data-id="1">
+                    <div class="rider-header">
+                        <div class="rider-avatar">RH</div>
+                        <div class="rider-info">
+                            <h3>Rahim Hossain</h3>
+                            <div class="rider-rating"><span class="stars">★★★★★</span> 4.9 rating</div>
+                        </div>
+                    </div>
+                    <div class="rider-details">
+                        <div class="detail-item"><span class="label">ETA</span><span class="value">30 min</span></div>
+                        <div class="detail-item"><span class="label">Vehicle</span><span class="value" style="font-size:13px;">Express Bike</span></div>
+                    </div>
+                    <div class="rider-price"><div class="price">$280</div><div class="price-label">Service Charge</div></div>
+                </div>
+                <div class="rider-card" onclick="selectRider(2)" data-id="2">
+                    <div class="rider-header">
+                        <div class="rider-avatar">KA</div>
+                        <div class="rider-info">
+                            <h3>Karim Ahmed</h3>
+                            <div class="rider-rating"><span class="stars">★★★★★</span> 4.8 rating</div>
+                        </div>
+                    </div>
+                    <div class="rider-details">
+                        <div class="detail-item"><span class="label">ETA</span><span class="value">45 min</span></div>
+                        <div class="detail-item"><span class="label">Vehicle</span><span class="value" style="font-size:13px;">Cargo Van</span></div>
+                    </div>
+                    <div class="rider-price"><div class="price">$420</div><div class="price-label">Service Charge</div></div>
+                </div>
+                <div class="rider-card" onclick="selectRider(3)" data-id="3">
+                    <div class="rider-header">
+                        <div class="rider-avatar">SI</div>
+                        <div class="rider-info">
+                            <h3>Shahid Islam</h3>
+                            <div class="rider-rating"><span class="stars">★★★★★</span> 5.0 rating</div>
+                        </div>
+                    </div>
+                    <div class="rider-details">
+                        <div class="detail-item"><span class="label">ETA</span><span class="value">1 hr</span></div>
+                        <div class="detail-item"><span class="label">Vehicle</span><span class="value" style="font-size:13px;">Armored Courier</span></div>
+                    </div>
+                    <div class="rider-price"><div class="price">$620</div><div class="price-label">Service Charge</div></div>
+                </div>
+                <div class="rider-card" onclick="selectRider(4)" data-id="4">
+                    <div class="rider-header">
+                        <div class="rider-avatar">NU</div>
+                        <div class="rider-info">
+                            <h3>Nasir Uddin</h3>
+                            <div class="rider-rating"><span class="stars">★★★★★</span> 4.9 rating</div>
+                        </div>
+                    </div>
+                    <div class="rider-details">
+                        <div class="detail-item"><span class="label">ETA</span><span class="value">1.5 hr</span></div>
+                        <div class="detail-item"><span class="label">Vehicle</span><span class="value" style="font-size:13px;">Secure Vault Transport</span></div>
+                    </div>
+                    <div class="rider-price"><div class="price">$850</div><div class="price-label">Service Charge</div></div>
+                </div>
+            </div>
+        </section>
+
+        <div id="payment-anchor"></div>
+
+        <section class="payment-section">
+            <h2>Payment</h2>
+            <p>Complete your payment to release the delivery</p>
+
+            <div class="payment-method">
+                <i class="fa-brands fa-apple-pay"></i>
+                <div class="payment-method-info">
+                    <h3>Apple Card</h3>
+                    <p>Secure & Fast Payment</p>
+                </div>
+            </div>
+
+            <div class="payment-instructions">
+                <h3><i class="fa-solid fa-circle-info"></i> Payment Instructions</h3>
+                <ol>
+                    <li>Click the <strong>Pay Now</strong> button below</li>
+                    <li>You will be directed to <strong>Telegram</strong> to complete payment</li>
+                    <li>Confirm your payment details with our agent</li>
+                    <li>Upload a screenshot of your payment confirmation</li>
+                    <li>Your delivery will be confirmed immediately</li>
+                </ol>
+            </div>
+
+            <a class="btn btn-primary btn-pay-now" href="https://t.me/safe_goods" target="_blank" rel="noreferrer">
+                <i class="fa-solid fa-lock"></i> Pay Now
+            </a>
+            <p style="color:#aaa; margin-top:14px; font-size:13px;">
+                <i class="fa-solid fa-shield-halved"></i> Your payment is secure and encrypted
+            </p>
+        </section>
+    </div>
+</div>
+
+<div class="modal" id="confirmModal" onclick="closeConfirmModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <h2><i class="fa-solid fa-clipboard-check"></i> Confirm Your Order</h2>
+            <p>Please review your delivery selection before confirming</p>
+        </div>
+        <div class="order-summary">
+            <div class="summary-item"><span class="label">Receiver</span><span class="value">A K M Gias Uddin Ahmed</span></div>
+            <div class="summary-item"><span class="label">Delivery To</span><span class="value" style="text-align:right; max-width:240px;">252/4 West Manikdi, Dhaka Cantonment, Dhaka 1206, Bangladesh</span></div>
+            <div class="summary-item"><span class="label">Item Value</span><span class="value">≈ $539,490 USD</span></div>
+            <div class="summary-item"><span class="label">Selected Rider</span><span class="value" id="confirmRiderName">-</span></div>
+            <div class="summary-item"><span class="label">Delivery Time</span><span class="value" id="confirmRiderEta">-</span></div>
+            <div class="summary-item"><span class="label">Service Charge</span><span class="value" id="confirmRiderPrice">-</span></div>
+        </div>
+        <div class="warning-box">
+            <strong><i class="fa-solid fa-triangle-exclamation"></i> CHARGES WILL APPLY</strong>
+            <p>The service charge shown above will be deducted upon payment confirmation.</p>
+        </div>
+        <div class="modal-buttons">
+            <button class="btn btn-cancel" onclick="closeModal('confirmModal')"><i class="fa-solid fa-xmark"></i> Cancel</button>
+            <button class="btn btn-primary" onclick="handleConfirm()"><i class="fa-solid fa-check"></i> Confirm</button>
+        </div>
+    </div>
+</div>
+
+<div class="loading-modal" id="loadingModal">
+    <div class="loader"></div>
+    <div class="loading-text">CONFIRMING ORDER</div>
+    <div class="loading-note">BEFORE DELIVERY NOTE CHARGES WILL APPLY</div>
+</div>
+
+<div class="modal" id="confirmedModal" onclick="closeConfirmedModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <h2><i class="fa-solid fa-circle-check"></i> Order Confirmed!</h2>
+            <p>Your delivery has been confirmed successfully</p>
+        </div>
+        <div class="order-summary">
+            <div class="summary-item"><span class="label">Tracking ID</span><span class="value">REG81993</span></div>
+            <div class="summary-item"><span class="label">Status</span><span class="value">Confirmed</span></div>
+            <div class="summary-item"><span class="label">Next Step</span><span class="value">Complete Payment</span></div>
+        </div>
+        <button class="btn btn-primary" style="width:100%; margin-top:20px;" onclick="goToPayment()">
+            <i class="fa-solid fa-credit-card"></i> Proceed to Payment
+        </button>
+    </div>
+</div>
+
+<footer>
+    <p>© 2026 UPPS Delivery. All rights reserved. | Professional Delivery Services</p>
+    <p style="margin-top:6px;">Track with Precision. Deliver with Confidence.</p>
+    <p style="margin-top:10px;">Support: <a href="https://t.me/safe_goods" target="_blank" rel="noreferrer" style="color:#39ff14;">https://t.me/safe_goods</a></p>
+</footer>
+
+<script>
+const RIDERS = [
+    { id: 1, name: "Rahim Hossain", initials: "RH", rating: 4.9, eta: "30 min", vehicle: "Express Bike", price: 280 },
+    { id: 2, name: "Karim Ahmed", initials: "KA", rating: 4.8, eta: "45 min", vehicle: "Cargo Van", price: 420 },
+    { id: 3, name: "Shahid Islam", initials: "SI", rating: 5.0, eta: "1 hr", vehicle: "Armored Courier", price: 620 },
+    { id: 4, name: "Nasir Uddin", initials: "NU", rating: 4.9, eta: "1.5 hr", vehicle: "Secure Vault Transport", price: 850 },
+];
+
+let selectedRiderId = null;
+
+function handleVerify() {
+    document.getElementById('hiddenContent').classList.add('active');
+    setTimeout(() => {
+        document.getElementById('details-anchor').scrollIntoView({ behavior: 'smooth' });
+    }, 100);
+}
+
+function selectRider(id) {
+    selectedRiderId = id;
+    document.querySelectorAll('.rider-card').forEach(card => card.classList.remove('selected'));
+    document.querySelector('.rider-card[data-id="' + id + '"]').classList.add('selected');
+    const rider = RIDERS.find(r => r.id === id);
+    if (rider) {
+        document.getElementById('confirmRiderName').textContent = rider.name;
+        document.getElementById('confirmRiderEta').textContent = rider.eta;
+        document.getElementById('confirmRiderPrice').textContent = '$' + rider.price;
+    }
+    openModal('confirmModal');
+}
+
+function openModal(id) {
+    document.getElementById(id).classList.add('active');
+}
+
+function closeModal(id) {
+    document.getElementById(id).classList.remove('active');
+}
+
+function closeConfirmModal(e) {
+    if (e.target.id === 'confirmModal') closeModal('confirmModal');
+}
+
+function closeConfirmedModal(e) {
+    if (e.target.id === 'confirmedModal') closeModal('confirmedModal');
+}
+
+function handleConfirm() {
+    closeModal('confirmModal');
+    openModal('loadingModal');
+    setTimeout(() => {
+        closeModal('loadingModal');
+        openModal('confirmedModal');
+    }, 2200);
+}
+
+function goToPayment() {
+    closeModal('confirmedModal');
+    setTimeout(() => {
+        document.getElementById('payment-anchor').scrollIntoView({ behavior: 'smooth' });
+    }, 50);
+}
+</script>
+
+</body>
+</html>
